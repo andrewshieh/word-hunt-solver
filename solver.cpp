@@ -14,7 +14,7 @@ const vector<pair<int, int>> DIRS = {
 
 struct TrieNode {
     bool is_word = false;
-    struct TrieNode *children[26] = {};
+    struct TrieNode *children[26] = {0};
 };
 
 TrieNode *root = new TrieNode;
@@ -71,13 +71,33 @@ void dfs(string board, string word, int i, int j) {
     }
 }
 
+void free_all(TrieNode* curr) {
+    for (int i = 0; i < 27; i++) {
+        if (curr->children[i] != 0) {
+            free_all(curr->children[i]);
+        }
+    }
+    delete curr;
+}
+
 int main(int argc, char **argv) {
+    string board = argv[1];
+
     if (argc != 2) {
         cout << "Error: expected 1 argument, got " << argc-1 << "\n";
         return 1;
+    } else if (board.length() != 16) {
+        cout << "Error: input must be a 16 letter string" << "\n";
+        return 1;
     }
-    string board = argv[1];
-    for (char &c: board) c = toupper(c);
+
+    for (char &c: board) {
+        if (!isalpha(c)) {
+            cout << "Error: input must only have letters" << "\n";
+            return 1;
+        }
+        c = toupper(c);
+    }
 
     ifstream dict("dictionary.txt");
     string word;
@@ -93,13 +113,14 @@ int main(int argc, char **argv) {
     }
 
     sort(answer.begin(), answer.end(),
-     [](string &one, string &two) {
-            return one.length() == two.length() ? one < two : one.length() > two.length();
-         });
+     [](string &one, string &two) { return one.length() == two.length() ? one < two : one.length() > two.length(); });
+    answer.erase(unique(answer.begin(), answer.end()), answer.end());
     for (string s: answer) {
         if (s.length() >= 3) {
             cout << s << "\n";
         }
     }
+
+    free_all(root);
     return 0;
 }
