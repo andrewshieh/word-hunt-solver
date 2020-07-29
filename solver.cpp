@@ -81,19 +81,19 @@ void free_all(TrieNode* curr) {
 }
 
 int main(int argc, char **argv) {
-    string board = argv[1];
-
     if (argc != 2) {
         cout << "Error: expected 1 argument, got " << argc-1 << "\n";
         return 1;
-    } else if (board.length() != 16) {
+    }
+    string board = argv[1];
+    if (board.length() != 16) {
         cout << "Error: input must be a 16 letter string" << "\n";
         return 1;
     }
 
     for (char &c: board) {
         if (!isalpha(c)) {
-            cout << "Error: input must only have letters" << "\n";
+            cout << "Error: input must only contain letters" << "\n";
             return 1;
         }
         c = toupper(c);
